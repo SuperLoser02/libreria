@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\Roles\RoleController;
 use App\Http\Requests\Bitacoras\BitacoraRequest;
 use App\Http\Requests\Empleados\EmpleadoRequest;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Validation\Rules;
 use Illuminate\Http\RedirectResponse;
@@ -30,7 +31,7 @@ class EmpleadoController extends Controller
         if(Auth::check()){
             if($role_privilegio){
                 $empleados = User::all();
-                return view('profile.usuarios.usuarios', compact('empleados'));
+                return view('profile.empleados.empleado', compact('empleados'));
             }
             return redirect('dashboard');
         }
@@ -46,7 +47,8 @@ class EmpleadoController extends Controller
         $role = roleController::hasPrivilegio($role_id,8);
         if(Auth::check()){
             if($role){
-                return view(view: 'auth.register');
+                $roles = Role::all();
+                return view('profile.empleados.formEmpleado', compact('roles'));
             }
             return $this->index();
         }
@@ -62,8 +64,9 @@ class EmpleadoController extends Controller
         $role = roleController::hasPrivilegio($role_id,8);
         if(Auth::check()){
             if($role){
-                $users=User::find($users);    
-                return view('profile.usuaios.usuarioEdit',compact('cliente'));// va a  una vista para editar  
+                $empleado = User::findOrFail($users);   
+                $roles = Role::all();
+                return view('profile.empleados.empleadoEdit',compact('empleado','roles'));
             }
             return $this->index();
         }
@@ -130,7 +133,7 @@ class EmpleadoController extends Controller
 
         
 
-        return redirect()->route('empleados')->with('status', 'Usuario creado exitosamente.');
+        return redirect()->route('empleados.index')->with('status', 'Usuario creado exitosamente.');
     }
     /*
     Acutualiza los datos en un Empleado(user) existente exepto su id ysu contraseña se envia

@@ -6,6 +6,7 @@ use App\Http\Controllers\Bitacoras\BitacoraController;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Bitacoras\BitacoraRequest;
 use App\Http\Requests\Roles\RoleRequest;
+use App\Models\Privilegio;
 use App\Models\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -37,7 +38,8 @@ class RoleController extends Controller
         $role_id = Auth::user()->role_id;
         $role = $this::hasPrivilegio($role_id,9);
         if($role){
-            return view('profile.roles.createRol');
+            $privilegios = Privilegio::all();
+            return view('profile.roles.createRol', compact('privilegios'));
         }
         return view('dashboard');
     }
@@ -80,7 +82,7 @@ class RoleController extends Controller
         // Llama al método del BitacoraController
         $bitacoraController->storeInsert($bitacoraRequest);
 
-        return redirect()->route('profile.roles.roles')->with('success', 'Rol creado exitosamente');
+        return redirect()->route('roles.index')->with('success', 'Rol creado exitosamente');
     }
 
     /*
@@ -94,6 +96,8 @@ class RoleController extends Controller
     /*
     te permite entrar a un formulario para hacer update a un rol ta existente
     */
+
+    /*
     public function edit($id){
         $role_id = Auth::user()->role_id;
         $role_privilegio = $this::hasPrivilegio($role_id,9);
@@ -106,6 +110,23 @@ class RoleController extends Controller
         }
         return view('auth.login');
         
+    }
+        */
+
+    public function edit($id) {
+        $role_id = Auth::user()->role_id;
+        $role_privilegio = $this::hasPrivilegio($role_id, 9);
+        
+        if (Auth::check()) {
+            if ($role_privilegio) {
+                $role = Role::with('privilegios')->findOrFail($id); // Cargar el rol con sus privilegios
+                $privilegios = Privilegio::all(); // Cargar todos los privilegios disponibles
+                
+                return view('profile.roles.rolEdit', compact('role', 'privilegios'));
+            }
+            return redirect('dashboard');
+        }
+        return view('auth.login');
     }
     /* 
     Actualiza los datos de un rol ya existentes se debe de mandar

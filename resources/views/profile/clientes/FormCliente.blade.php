@@ -14,18 +14,15 @@
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
-    
     @include('layouts.sidebar')
-
 </head>
-<body class="font-sans antialiased">
-
-    <div class="min-h-screen bg-gray-100 flex">
+<body class="font-sans antialiased bg-gray-100">
+    <div class="min-h-screen flex flex-col lg:flex-row">
         <!-- Sidebar -->
-        <aside class="w-1/5"></aside>
+        <aside class="w-72"></aside>
 
         <!-- Page Content -->
-        <main class="flex-1 p-4 mt-20">
+        <main class="flex-1 p-4">
             <h1 class="text-2xl font-semibold mb-4">Registrar nuevo cliente</h1>
 
             <form method="POST" action="{{ route('cliente.store') }}">

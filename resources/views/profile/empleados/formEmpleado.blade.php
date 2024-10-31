@@ -14,22 +14,19 @@
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
-    
     @include('layouts.sidebar')
-
 </head>
-<body class="font-sans antialiased">
-
-    <div class="min-h-screen bg-gray-100 flex">
+<body class="font-sans antialiased bg-gray-100">
+    <div class="min-h-screen flex flex-col lg:flex-row">
         <!-- Sidebar -->
-        <aside class="w-1/5"></aside>
+        <aside class="w-72"></aside>
 
         <!-- Page Content -->
-        <main class="flex-1 p-4 mt-20">
+        <main class="flex-1 p-4">
             <h1 class="text-2xl font-semibold mb-4">Registrar Empleado</h1>
             
             
-            <form method="POST" action="{{ route('register') }}">
+            <form method="POST" action="{{ route('empleados.store') }}">
                 @csrf
         
                 @if ($errors->any())
@@ -62,15 +59,17 @@
                     <x-input-error :messages="$errors->get('email')" class="mt-2" />
                 </div>
 
-                <!-- Rol -->
-                <div class="mt-4">
-                    <x-input-label for="rol" :value="__('Rol')" />
-                    <select name="rol" id="rol" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500">
-                        <option value="Admin">Administrador</option>
-                        <option value="Usuario">Vendedor</option>
-                    </select>
-                </div>
-                
+               <!-- Rol -->
+               <div class="mt-4">
+                <x-input-label for="role_id" :value="__('Rol')" />
+                <select name="role_id" id="role_id" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500" required>
+                    <option value="" disabled selected>Seleccione un rol</option>
+                    @foreach($roles as $role)
+                        <option value="{{ $role->nombre }}">{{ $role->nombre }}</option>
+                    @endforeach
+                </select>
+            </div>
+
         
                 <!-- Password -->
                 <div class="mt-4">

@@ -14,75 +14,93 @@
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
-    
     @include('layouts.sidebar')
-
 </head>
-<body class="font-sans antialiased">
-
-    <div class="min-h-screen bg-gray-100 flex">
+<body class="font-sans antialiased bg-gray-100">
+    <div class="min-h-screen flex">
         <!-- Sidebar -->
         <aside class="w-1/5"></aside>
 
         <!-- Page Content -->
         <main class="flex-1 p-4 mt-20">
-            <h1 class="text-2xl font-semibold mb-4">Usuarios</h1>
-            <div class="row">
-                <div class="col-12">
-    
-                    {{-- <div class="mb-2 d-flex justify-content-between">
-                        <div class="form-group">
-                            <a href="" class="btn btn-primary waves-effect waves-light">
-                                <i class="fas fa-plus-circle"></i>&nbsp;
-                                Nuevo Usuario
-                            </a>
-                        </div>
-                    </div> --}}
-    
-                    <div class="card-box">
-                        <div class="table-responsive">
-                            <table id="table-usuario" class="table table-hover mb-0 dts">
-                                <thead class="bg-dark text-center text-white text-nowrap">
-                                    <tr style="cursor: pointer">
-                                        <th scope="col">CI</th>
-                                        <th scope="col">Nombre del usuario</th>
-                                        <th scope="col">Email</th>
-                                        <th scope="col">Rol</th>
-                                        <th>Acciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($users as $usuario)
-    <tr class="text-nowrap text-center">
-        <th scope="row" class="align-middle">{{ $usuario->id }}</th>
-        <td class="align-middle">{{ $usuario->empleado->nombre ?? 'N/A' }} </td>
-        <td class="align-middle">{{ $usuario->email ?? 'No especificado' }}</td>
-        <td class="align-middle">{{ $usuario->rol->nombre ?? 'Sin rol asignado' }}</td>
-        <td class="align-middle text-nowrap" style="width: 150px">
-            <div class="d-flex justify-content-center">
-                
-                <a href="{{ route('usuarios.edit', $usuario->id) }}" title="Editar" class="btn btn-sm btn-primary mx-1">
-                    <i class="fas fa-edit"></i>
-                </a>
-                <form id="formDeleteUsuario_{{ $usuario->id }}" action="{{ route('usuarios.delete', $usuario->id) }}" method="post">
-                    @csrf
-                    @method('DELETE')
-                    <button type="button" title="Eliminar" class="btn btn-sm btn-danger">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </form>
-            </div>
-        </td>
-    </tr>
-@endforeach
+            <div class="container mx-auto py-8">
+                <h1 class="text-3xl font-bold mb-4 text-gray-800">Listado de Usuarios</h1>
 
-                                </tbody>
-                            </table>
-                        </div>
+                {{-- Botón de Registro y Buscador 
+                <div class="flex items-center justify-between mb-4">
+                    <a href="{{ route('usuarios.create') }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                        Registrar Nuevo Usuario
+                    </a>--}}
+
+                    <!-- Buscador -->
+                    <div class="relative w-full max-w-sm ml-auto">
+                        <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="Buscar usuario..."
+                            class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition duration-300">
                     </div>
                 </div>
+
+                <!-- Tabla de Usuarios -->
+                <table id="userTable" class="min-w-full bg-white shadow-md rounded-lg mt-3">
+                    <thead class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+                        <tr class="text-left">
+                            <th class="px-6 py-3">CI</th>
+                            <th class="px-6 py-3">Nombre del Usuario</th>
+                            <th class="px-6 py-3">Email</th>
+                            <th class="px-6 py-3">Rol</th>
+                            <th class="px-6 py-3 text-center">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-gray-700 text-sm font-light">
+                        @foreach ($users as $usuario)
+                        <tr class="border-b border-gray-200 hover:bg-gray-100 text-center">
+                            <td class="px-6 py-4 whitespace-nowrap">{{ $usuario->id }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap">{{ $usuario->name }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap">{{ $usuario->email ?? 'No especificado' }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap">{{ $usuario->role->nombre ?? 'Sin rol asignado' }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex justify-center space-x-2">
+                                    <a href="{{ route('usuarios.edit', $usuario->id) }}" class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded">
+                                        Editar
+                                    </a>
+                                    <form action="{{ route('usuarios.delete', $usuario->id) }}" method="POST" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este usuario?');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+                                            Eliminar
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
             </div>
         </main>
     </div>
+
+    <!-- JavaScript para el filtro de la tabla -->
+    <script>
+        function filterTable() {
+            const searchInput = document.getElementById("searchInput").value.toLowerCase();
+            const table = document.getElementById("userTable");
+            const rows = table.getElementsByTagName("tr");
+
+            for (let i = 1; i < rows.length; i++) {
+                const cells = rows[i].getElementsByTagName("td");
+                let match = false;
+
+                for (let j = 0; j < cells.length; j++) {
+                    const cellContent = cells[j].textContent || cells[j].innerText;
+                    if (cellContent.toLowerCase().includes(searchInput)) {
+                        match = true;
+                        break;
+                    }
+                }
+
+                rows[i].style.display = match ? "" : "none";
+            }
+        }
+    </script>
 </body>
 </html>

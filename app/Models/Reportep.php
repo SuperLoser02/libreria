@@ -8,5 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class Reportep extends Model
 {
     protected $table = 'ganancia_diaria';
+    public $timestamps = false;
     use HasFactory;
 }

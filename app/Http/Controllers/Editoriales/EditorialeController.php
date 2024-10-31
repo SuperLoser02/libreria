@@ -95,7 +95,9 @@ class EditorialeController extends Controller
      * Update the specified resource in storage.
      */
     public function update(EditorialeRequest $request, int $id){
-        
+        $request->validate([
+            'Nombre' => 'required|string|max:50'
+        ]);
         $Editorial = Editoriale::where('id', $id)->first();
         $anterioresDatos = $Editorial->all();
         $bitacoraRequest = new BitacoraRequest([
@@ -110,9 +112,7 @@ class EditorialeController extends Controller
         $bitacoraController->storeUpdate($bitacoraRequest);
         
         $id=Editoriale::find($id);
-        $request->validate([
-            'Nombre' => 'required|string|max:50'
-        ]);
+       
         $id->update($request->all());
         return redirect()->route('editorial.index')->with('success', 'Editorial modificada correctamente.');
     }

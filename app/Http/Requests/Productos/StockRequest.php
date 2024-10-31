@@ -23,7 +23,7 @@ class StockRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'producto_codigo' => ['required', 'string', 'exists:producto,codigo', 
+            'producto_codigo' => ['required', 'string', 'exists:productos,codigo', 
             Rule::unique('stocks', 'producto_codigo')->ignore($this->route('stock'), 'producto_codigo')],
             'cantidad' => ['required', 'numeric', 'min:0'],
             'max_stock' => ['required', 'numeric', 'min:0'],

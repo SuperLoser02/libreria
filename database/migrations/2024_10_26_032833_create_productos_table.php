@@ -24,7 +24,7 @@ return new class extends Migration
             
             $table->foreign('editoriale_id')->references('id')->on('editoriales'); // Llave foránea a la tabla editorial
 
-            $table->string('tipo_producto', 15);
+            //$table->string('tipo_producto', 15);
         });
     }
 

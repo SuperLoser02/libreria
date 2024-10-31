@@ -13,20 +13,21 @@ use Illuminate\Support\Facades\Auth;
 
 class StockController extends Controller
 {
-    public function create(){   
+    public function create($producto_codigo){   
         $role_id = Auth::user()->role_id;
         $role_privilegio = RoleController::hasPrivilegio($role_id,privilegio_id: 3);
         if(Auth::check()){
             if($role_privilegio){
                 // Aqui deberia llevarme a un formulario para rellenar
                 // return view("profile.productos.FormStock");
+                return view("profile.productos.createStock",compact('producto_codigo'));
             }
             return app(ProductoController::class)->index();
         }
         return view('auth.login');
     }
 
-    public function edit(string $codigo){   
+    /*public function edit(string $codigo){   
         $role_id = Auth::user()->role_id;
         $role_privilegio = RoleController::hasPrivilegio($role_id,privilegio_id: 3);
         if(Auth::check()){
@@ -40,7 +41,24 @@ class StockController extends Controller
             return $this->index();
         }
         return view('auth.login');
+    }*/
+    public function edit(string $codigo)
+{   
+    $role_id = Auth::user()->role_id;
+    $role_privilegio = RoleController::hasPrivilegio($role_id, privilegio_id: 3);
+    if(Auth::check()) {
+        if($role_privilegio) {
+            $stock = Stock::where('producto_codigo', $codigo)->first();        
+            if ($stock) {
+                return view('profile.productos.editStock', compact('stock'));
+            } else {
+                return redirect()->back()->with('error', 'Stock no encontrado.');
+            }
+        }
+        return app(ProductoController::class)->index();
     }
+    return view('auth.login');
+}
 
     public function store(StockRequest $request){
         $stock = Stock::create([

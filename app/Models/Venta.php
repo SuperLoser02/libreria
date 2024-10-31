@@ -9,4 +9,5 @@ class Venta extends Model
 {
     protected $table = 'ventas';
     use HasFactory;
+    public $timestamps = false;
 }

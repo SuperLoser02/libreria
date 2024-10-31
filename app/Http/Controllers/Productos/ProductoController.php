@@ -35,7 +35,7 @@ class ProductoController extends Controller
         $role_privilegio = RoleController::hasPrivilegio($role_id,privilegio_id: 3);
         if(Auth::check()){
             if($role_privilegio){
-                return view("profile.productos.FormProducto");
+                return view("profile.productos.createProducto");
             }
             return $this->index();
         }
@@ -48,7 +48,7 @@ class ProductoController extends Controller
         if(Auth::check()){
             if($role_privilegio){
                 $producto=Producto::where('codigo', $codigo)->first();        
-                return view('profile.productos.productoEdit',compact('producto'));
+                return view('profile.productos.editProducto',compact('producto'));
             }
             return $this->index();
         }
@@ -66,16 +66,16 @@ class ProductoController extends Controller
     public function store(ProductoRequest $request){
         $editorial = new EditorialeController;
         $editorial_id = $editorial->createOrFindReturnId($request->editoriale_id);
-        $autor = new AutorController;
-        $autor_id =  $autor->createOrFindAutorReturnId($request->autor);
+        //$autor = new AutorController;
+        //$autor_id =  $autor->createOrFindAutorReturnId($request->autor);
         $producto = Producto::create([
-            'codigo' => strtoupper($request->codigo),
+            'codigo' => $request->codigo,
             'nombre' => $request->nombre,
             'precio' => $request->precio,
             'fecha_de_publicacion' => $request->fecha_de_publicacion,
             //'imagen' => $request->imagen,
             'editoriale_id' => $editorial_id,
-            'autor' => $autor_id
+            //'autor' => $autor_id
         ]); 
 
         $genenros = $request->input('generos', []);
@@ -92,8 +92,8 @@ class ProductoController extends Controller
         
         $bitacoraController = new BitacoraController();
         $bitacoraController->storeInsert($bitacoraRequest);
-
-        return redirect()->route('producto.index')->with('success', 'Producto creado exitosamente');
+        $producto_codigo = $producto->codigo;
+        return app(StockController::class)->create($producto_codigo);
     }
 
 
@@ -110,14 +110,15 @@ class ProductoController extends Controller
             'fecha_de_publicacion',
             //'imagen',
         ]));   
+        $producto->codigo =  strtoupper($request->codigo);
         
         $editorial = new EditorialeController;
         $editorial_id = $editorial->createOrFindReturnId($request->editoriale_id);
         $producto->editoriale_id = $editorial_id;
 
-        $autor = new AutorController;
-        $autor_id =  $autor->createOrFindAutorReturnId($request->autor);
-        $producto->autor = $autor_id;
+        //$autor = new AutorController;
+        //$autor_id =  $autor->createOrFindAutorReturnId($request->autor);
+        //$producto->autor = $autor_id;
         
         $genenros = $request->input('generos', []);
         $this->assignGeneroToProducto($request->codigo, $genenros);

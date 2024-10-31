@@ -5,7 +5,7 @@ use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\ComprasController;
 use App\Http\Controllers\FacturaController;
 use App\Http\Controllers\PrivilegiosController;
-use App\Http\Controllers\ProductoController;
+//use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PromocionController;
 use App\Http\Controllers\ProveedoresController;
@@ -16,7 +16,11 @@ use App\Http\Controllers\VentasController;
 use Illuminate\Support\Facades\Route;
 
 
+use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Clientes\ClienteController;
+use App\Http\Controllers\Empleados\EmpleadoController;
+use App\Http\Controllers\Productos\ProductoController;
+use App\Http\Controllers\Productos\StockController;
 use App\Http\Controllers\Roles\RoleController;
 
 
@@ -47,13 +51,10 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/bitacora', [BitacoraController::class, 'index'])->name('bitacora.index');
 
-    Route::get('/empleados', function () {
-        return view('profile.empleados.empleado');
-    })->name('empleados.index');
+    
 
-    Route::get('/form-empleado', function () {
-        return view('profile.empleados.formEmpleado');
-    })->name('formEmpleado.index');
+
+    Route::get('/empleados', [EmpleadoController::class, 'index'])->name('empleados.index');
    
     Route::get('/roles', [RoleController::class, 'index'])->name('roles.index');
 
@@ -114,12 +115,37 @@ Route::put('/roles/{role}', [RoleController::class, 'update'])
        ->name('roles.update');
 
 //Ruta para eliminar 
-Route::delete('/roles/{role}',[RolesController::class,'destroy'])
+Route::delete('/roles/{role}',[RoleController::class,'destroy'])
        ->name('roles.delete');
+
+
+//empleados
+
+Route::get('/empleados/create',[EmpleadoController::class,'create'])
+       ->name('empleados.create');
+
+Route::post('/empleados/store',[EmpleadoController::class,'store'])
+       ->name('empleados.store');
+
+//Rutas para editar lleva aun formulario
+Route::get('/empleados/{empleado}',[EmpleadoController::class,'edit'])
+       ->name('empleados.edit');
+// ruta para editar actualiza los datos 
+Route::put('/empleados/{empleado}', [EmpleadoController::class, 'update'])
+       ->name('empleados.update');
+
+//Ruta para eliminar 
+Route::delete('/empleados/{empleado}',[EmpleadoController::class,'destroy'])
+       ->name('empleados.delete');
+
+
 
 //Usuarios
 
 //Rutas para editar lleva aun formulario
+Route::get('/usuarios/create',[EmpleadoController::class,'create'])
+       ->name('usuarios.create');
+
 Route::get('/usuarios/{usuario}/edit', [UsuariosController::class, 'edit'])->name('usuarios.edit');
 
 Route::put('/usuarios/{users}', [UsuariosController::class, 'update'])
@@ -128,6 +154,49 @@ Route::put('/usuarios/{users}', [UsuariosController::class, 'update'])
 //Ruta para eliminar 
 Route::delete('/users/{users}',[UsuariosController::class,'destroy'])
        ->name('usuarios.delete');
+
+
+
+//Produccto
+Route::get('/productos/create',[ProductoController::class,'create'])
+       ->name('producto.create');
+
+Route::post('/produtos/store',[ProductoController::class,'store'])
+       ->name('producto.store');
+
+//Rutas para editar lleva aun formulario
+Route::get('/productos/{producto}',[ProductoController::class,'edit'])
+       ->name('producto.edit');
+       
+// ruta para editar actualiza los datos 
+Route::put('/productos/{producto}', [ProductoController::class, 'update'])
+       ->name('producto.update');
+
+//Ruta para eliminar 
+Route::delete('/productos/{producto}',[ProductoController::class,'destroy'])
+       ->name('producto.delete');
+
+
+
+//Stock
+//Route::get('stock/create/{codigo?}', [StockController::class, 'create'])->name('stock.create');
+Route::get('/stock/create',[StockController::class,'create'])
+       ->name('stock.create');
+
+Route::post('/stock/store',[StockController::class,'store'])
+       ->name('stock.store');
+
+//Rutas para editar lleva aun formulario
+Route::get('/stock/{stock}',[StockController::class,'edit'])
+       ->name('stock.edit');
+// ruta para editar actualiza los datos 
+Route::put('/stock/{stock}', [StockController::class, 'update'])
+       ->name('stock.update');
+
+
+//Ruta para eliminar 
+Route::delete('/stock/{stock}',[StockController::class,'destroy'])
+       ->name('stock.delete');
 
 
 

@@ -11,6 +11,7 @@ class Stock extends Model
     protected $table = 'stocks';
     protected $primaryKey = 'producto_codigo';
     protected $keyType = 'string';
+    public $timestamps = false;
     protected $fillable = [
         'producto_codigo',
         'cantidad',

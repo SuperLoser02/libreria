@@ -17,35 +17,45 @@
     @include('layouts.sidebar')
 </head>
 <body class="font-sans antialiased bg-gray-100">
-    <div class="min-h-screen bg-gray-100 flex">
+    <div class="min-h-screen flex flex-col lg:flex-row">
         <!-- Sidebar -->
-        <aside class="w-1/5"></aside>
+        <aside class="w-72"></aside>
+
 
         <!-- Page Content -->
-        <main class="flex-1 p-8 mt-24">
+        <main class="flex-1 p-8 ">
             <h1 class="text-3xl font-bold text-gray-800">Agregar Nuevo Rol</h1>
 
             <div class="container mx-auto">
                 <div class="bg-white p-8 rounded-lg shadow-lg max-w-md mx-auto">
                     <form action="{{ route('roles.store') }}" method="POST" class="space-y-6">
                         @csrf
-
-                        <!-- ID (readonly or optional) -->
-                        <div>
-                            <label for="id" class="block text-sm font-medium text-gray-700">ID</label>
-                            <input type="number" name="id" id="id" class="mt-1 w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" placeholder="ID del rol" required>
-                        </div>
-
+                        
                         <!-- Nombre -->
                         <div>
-                            <label for="nombre" class="block text-sm font-medium text-gray-700">Nombre</label>
+                            <label for="nombre" class="block text-lg font-medium text-gray-700">Nombre</label>
                             <input type="text" name="nombre" id="nombre" class="mt-1 w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" placeholder="Nombre del rol" required>
+                        </div>
+
+                        <!-- Selección de Privilegios -->
+                        <div>
+                            <label class="block text-lg font-medium text-gray-700">Privilegios</label>
+                            <div class="grid grid-cols-2  mt-2 space-y-2">
+                                @foreach($privilegios as $privilegio)
+                                    <div>
+                                        <label class="inline-flex items-center">
+                                            <input type="checkbox" name="privilegios[]" value="{{ $privilegio->id }}" data-descripcion="{{ $privilegio->descripcion }}" class="privilegio-checkbox h-4 w-4 text-blue-600 border-gray-300 rounded" onchange="updateDescripcion()">
+                                            <span class="ml-2 text-gray-700">{{ $privilegio->nombre }}</span>
+                                        </label>
+                                    </div>
+                                @endforeach
+                            </div>
                         </div>
 
                         <!-- Descripción -->
                         <div>
-                            <label for="descripcion" class="block text-sm font-medium text-gray-700">Descripción</label>
-                            <input type="text" name="descripcion" id="descripcion" class="mt-1 w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" placeholder="Descripción del rol" required>
+                            <label for="descripcion" class="block text-lg font-medium text-gray-700">Descripción</label>
+                            <textarea name="descripcion" id="descripcion" class="mt-1 w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" placeholder="Descripción de los privilegios seleccionados" readonly></textarea>
                         </div>
 
                         <!-- Botón Guardar -->
@@ -60,5 +70,25 @@
             </div>
         </main>
     </div>
+
+    <!-- JavaScript para actualizar la descripción -->
+    <script>
+        function updateDescripcion() {
+            // Selecciona todas las casillas de verificación con clase 'privilegio-checkbox'
+            const checkboxes = document.querySelectorAll(".privilegio-checkbox");
+            let descripcionesSeleccionadas = [];
+
+            // Recorre las casillas de verificación seleccionadas
+            checkboxes.forEach((checkbox) => {
+                if (checkbox.checked) {
+                    // Agrega la descripción al array si la casilla está seleccionada
+                    descripcionesSeleccionadas.push(checkbox.getAttribute("data-descripcion"));
+                }
+            });
+
+            // Actualiza el campo de descripción con las descripciones seleccionadas, separadas por comas
+            document.getElementById("descripcion").value = descripcionesSeleccionadas.join(', ');
+        }
+    </script>
 </body>
 </html>

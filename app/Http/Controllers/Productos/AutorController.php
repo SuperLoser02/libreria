@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Autor;
 
 class AutorController extends Controller
-{
+{/*
     // Obtiene todos los roles de la base de datos y los pasa a la vista.
     public function index()
     {
@@ -78,5 +78,5 @@ class AutorController extends Controller
         $autor->save();
     }
     return $autor->id; 
- }
+ }*/
 }

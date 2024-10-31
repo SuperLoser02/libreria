@@ -24,15 +24,15 @@ class ProductoRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'codigo' => ['required', 'string', 'regex:[A-Z]{3}-[0-9]{5}',  Rule::unique('productos', 'codigo')->ignore($this->route('producto'), 'codigo')],
+            'codigo' => ['required', 'string', 'regex:[A-Z]{3}-[0-9]{4}',  Rule::unique('productos', 'codigo')->ignore($this->route('producto'), 'codigo')],
             'nombre' => ['required', 'string', 'max:80'],
-            'precio' => ['required', 'numeric', 'regex:[0-9]{8}+[.][0-9]{2}'],
+            'precio' => ['required', 'numeric', 'regex:/^\d+(\.\d{1,2})?$/'],
             'fecha_de_publicacion' => ['required', 'date_format:Y-m-d H:i:s'],
-            'editoriale_id' => ['required', 'string', 'exists:editoriales,nombre'],
+            'editoriale_id' => ['required', 'string'],
             //'imagen' => ['required', 'image', 'mimes:jpeg,png,jpg', 'max:2048'] //ya no se que poner aqui debe ser obligatorio
-            'producto_tipo' => ['request', 'string', 'max:15'],
-            'autor' =>  ['required', 'string', 'max:60'],
-            'generos' => ['required', 'array'],
+            //'producto_tipo' => ['request', 'string', 'max:15'],
+            //'autor' =>  ['required', 'string', 'max:60'],
+            //'generos' => ['required', 'array'],
         ];
     }
 }

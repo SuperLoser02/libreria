@@ -11,6 +11,7 @@ class Producto extends Model
     protected $table = 'productos';
     protected $primaryKey = 'codigo';
     protected $keyType = 'string';
+    public $timestamps = false;
     protected $fillable = [
         'codigo',
         'nombre',
@@ -18,18 +19,18 @@ class Producto extends Model
         'fecha_de_publicacion',
         //'imagen',
         'editoriale_id',
-        'autor',
-        'producto_tipo',
+        //'autor',
+        //'producto_tipo',
     ];
     public function editorial()
     {
         return $this->belongsTo(Editoriale::class, 'editoriale_id');
     }
 
-    public function autor()
+    /*public function autor()
     {
         return $this->belongsTo(Autor::class, 'autor');
-    }
+    }*/
 
     public function stocks()
     {
