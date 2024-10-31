@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Productos;
 
-use App\Http\Controllers\AutorController;
 use App\Http\Controllers\Bitacoras\BitacoraController;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Editoriales\EditorialeController;
@@ -23,7 +22,7 @@ class ProductoController extends Controller
             if($role_privilegio){
                 $productos=Producto::all();
                 $stocks = Stock::all();
-                return view('profile.productos.productos',compact('productos', 'stocks'));
+                return view('profile.productos.producto',compact('productos', 'stocks'));
             }
             return redirect('dashboard');
         }
@@ -64,22 +63,17 @@ class ProductoController extends Controller
     }
 
     public function store(ProductoRequest $request){
-        $editorial = new EditorialeController;
+       $editorial = new EditorialeController;
         $editorial_id = $editorial->createOrFindReturnId($request->editoriale_id);
-        //$autor = new AutorController;
-        //$autor_id =  $autor->createOrFindAutorReturnId($request->autor);
-        $producto = Producto::create([
-            'codigo' => $request->codigo,
+       //dd($request);
+       $producto = Producto::create([
+            'codigo' => ($request->codigo),
             'nombre' => $request->nombre,
             'precio' => $request->precio,
             'fecha_de_publicacion' => $request->fecha_de_publicacion,
-            //'imagen' => $request->imagen,
+          // 'imagen' => $request->imagen,
             'editoriale_id' => $editorial_id,
-            //'autor' => $autor_id
         ]); 
-
-        $genenros = $request->input('generos', []);
-        $this->assignGeneroToProducto($request->codigo, $genenros);
 
         $bitacoraRequest = new BitacoraRequest([
             'tabla_afectada' => 'Productos',
@@ -92,7 +86,9 @@ class ProductoController extends Controller
         
         $bitacoraController = new BitacoraController();
         $bitacoraController->storeInsert($bitacoraRequest);
-        $producto_codigo = $producto->codigo;
+
+        $producto_codigo = $request->codigo;
+       // dd($producto);
         return app(StockController::class)->create($producto_codigo);
     }
 
@@ -103,25 +99,16 @@ class ProductoController extends Controller
 
         $anterioresDatos = $producto->all(); 
 
-        $producto->codigo =  strtoupper($request->codigo);
         $producto->update($request->only([
             'nombre',
             'precio',
             'fecha_de_publicacion',
-            //'imagen',
-        ]));   
+            'imagen',
+        ]));
         $producto->codigo =  strtoupper($request->codigo);
-        
         $editorial = new EditorialeController;
         $editorial_id = $editorial->createOrFindReturnId($request->editoriale_id);
         $producto->editoriale_id = $editorial_id;
-
-        //$autor = new AutorController;
-        //$autor_id =  $autor->createOrFindAutorReturnId($request->autor);
-        //$producto->autor = $autor_id;
-        
-        $genenros = $request->input('generos', []);
-        $this->assignGeneroToProducto($request->codigo, $genenros);
         $producto->save();
 
         $bitacoraRequest = new BitacoraRequest([

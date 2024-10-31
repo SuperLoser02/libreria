@@ -19,15 +19,14 @@ class StockController extends Controller
         if(Auth::check()){
             if($role_privilegio){
                 // Aqui deberia llevarme a un formulario para rellenar
-                // return view("profile.productos.FormStock");
                 return view("profile.productos.createStock",compact('producto_codigo'));
             }
             return app(ProductoController::class)->index();
         }
         return view('auth.login');
     }
-
-    /*public function edit(string $codigo){   
+/*
+    public function edit(string $codigo){   
         $role_id = Auth::user()->role_id;
         $role_privilegio = RoleController::hasPrivilegio($role_id,privilegio_id: 3);
         if(Auth::check()){
@@ -36,13 +35,14 @@ class StockController extends Controller
                 
                 // Crear un editForm para realizar los update de Stock 
                 
-                //return view('profile.productos.productoEdit',compact('producto'));
+                return view('profile.productos.editStock',compact('producto'));
             }
             return $this->index();
         }
         return view('auth.login');
-    }*/
-    public function edit(string $codigo)
+    }
+*/
+public function edit(string $codigo)
 {   
     $role_id = Auth::user()->role_id;
     $role_privilegio = RoleController::hasPrivilegio($role_id, privilegio_id: 3);
@@ -59,6 +59,8 @@ class StockController extends Controller
     }
     return view('auth.login');
 }
+
+
 
     public function store(StockRequest $request){
         $stock = Stock::create([
@@ -105,7 +107,7 @@ class StockController extends Controller
         $bitacoraController = new BitacoraController();
         $bitacoraController->storeUpdate($bitacoraRequest);
         
-        return app(ProductoController::class)->index();       
+        return redirect()->route('producto.index')->with('success', 'producto creado exitosamente');    
     }
 
     public function destroy(string $producto_codigo){
